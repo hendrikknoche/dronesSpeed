@@ -30,7 +30,7 @@ dfsummary<-sqldf::sqldf('select participant, speed, count(participant) as NumsOf
 ggmeans<-sqldf::sqldf('select speed, avg(prec), avg(acc) from dfpp group by speed')
 ggmeans<-melt(ggmeans,id.vars="Speed")
 ggmeans$Speed<-as.numeric(ggmeans$Speed)
-ggplot(ggmeans,aes(x=Speed,y=value,group=variable,color=variable))+geom_point()+geom_line()+ylim(0,1)+scale_x_continuous()
+ggplot(ggmeans,aes(x=Speed,y=value,group=variable,color=variable))+geom_point()+geom_line()+xlim(0,5)+ylim(0,1)+scale_x_continuous(limits = c(0, 5),breaks = c(0.5, 1.5, 3,4.5))+theme_bw()
 df$precision<-df$
 # df %>%
 #   group_by(Participant,Speed) %>%
