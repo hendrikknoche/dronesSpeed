@@ -1,6 +1,8 @@
 #import data from xlsx
 library(here)
 library(dplyr)
+library(reshape2)
+library(ggplot2)
 
 dx<-NULL
 df<-NULL
@@ -19,10 +21,16 @@ ppmx<-sqldf::sqldf('select participant, speed, count(participant) as NumsOf from
 df<-merge(df,ppmx)
 
 ppmy<-sqldf::sqldf('select participant, speed, outcome, count(participant) as NumsOf from df group by participant, speed, outcome')
-
-
+# ppmy$outcome<-as.factor(ppmy$outcome)
+dfpp<-dcast(ppmy, Participant+ Speed ~outcome,sum)
+dfpp$prec<-dfpp$TP/(dfpp$TP+dfpp$FP)
+dfpp$acc<-dfpp$TP/(dfpp$TP+dfpp$FN)
+dfpp<-dfpp[!is.na(dfpp$Participant),]
 dfsummary<-sqldf::sqldf('select participant, speed, count(participant) as NumsOf from df  where participant>-1 group by participant, speed')
-
+ggmeans<-sqldf::sqldf('select speed, avg(prec), avg(acc) from dfpp group by speed')
+ggmeans<-melt(ggmeans,id.vars="Speed")
+ggmeans$Speed<-as.numeric(ggmeans$Speed)
+ggplot(ggmeans,aes(x=Speed,y=value,group=variable,color=variable))+geom_point()+geom_line()+ylim(0,1)+scale_x_continuous()
 df$precision<-df$
 # df %>%
 #   group_by(Participant,Speed) %>%
