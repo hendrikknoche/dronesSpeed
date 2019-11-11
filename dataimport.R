@@ -8,6 +8,7 @@ dx<-NULL
 df<-NULL
 
 demog<-openxlsx::read.xlsx("data/DemographicsData.xlsx", sheet=1, skipEmptyRows=FALSE)
+dmogpP<-sqldf('select PID, videoGamesXP, VRxp, robotXP, droneXP,avg(PrecisionRate) as prec, avg(RecallRate ) as rec, avg(AccuracyRate) as acc from demog group by PID, videoGamesXP, VRxp, robotXP, droneXP')
 
 for(i in 1:24){
   dx<-openxlsx::read.xlsx("data/rawDataDrone2.xlsx", sheet=i, skipEmptyRows=FALSE)
